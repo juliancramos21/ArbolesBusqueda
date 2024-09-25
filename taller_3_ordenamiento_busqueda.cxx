@@ -2,16 +2,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
 #include <list>
-
 #include "song.h"
 
 // TODO #7: incluir cabecera arbol AVL
 // #include "arbolAVL.h"
 // TODO #8: incluir cabecera arbol RN a utilizar
-// #include <set>
-// #include <map>
+#include <set>
+#include <map>
 // TODO #9: incluir cabecera monticulo
 // #include "monticulo.h"
 
@@ -21,8 +19,8 @@ typedef std::list< Song > TList;
 // TODO #10: definir nombre alternativo para arbol AVL de tipo Song
 // typedef arbolAVL< Song > TAVL;
 // TODO #11: definir nombre alternativo para arbol RN de tipo Song
-// typedef std::set< Song >  TSet;
-// typedef std::map< std::string, Song >  TMap;
+typedef std::set< Song >  TSet;
+typedef std::map< std::string, Song >  TMap;
 // TODO #12: definir nombre alternativo para monticulo de tipo Song
 // typedef monticulo< Song > THeap;
 
@@ -50,8 +48,8 @@ int main( int argc, char* argv[] )
   // TODO #13: Declarar arbol AVL a utilizar
   // TAVL miArbolAVL;
   // TODO #14: Declarar arbol RN a utilizar
-  // TSet miArbolRN;
-  // TMap miArbolRN;
+  TSet miArbolRN;
+  TMap miArbolRN;
   // TODO #15: Declarar monticulo a utilizar
   // THeap miMonticulo;
 
@@ -70,7 +68,7 @@ int main( int argc, char* argv[] )
       << "Error al leer \"" << argv[ 1 ]
       << "\" para llenar el arbol RN."
       << std::endl;
-  
+
   // Llenar arbol AVL y calcular el tiempo empleado
   std::clock_t inicioLecturaAVL = std::clock( );
   bool lecturaAVL = addData( miArbolAVL, argv[ 1 ] );
@@ -121,7 +119,7 @@ int main( int argc, char* argv[] )
 
   // Comparar los arboles
   // TODO #19: Comparar que los tres recorridos inorden tengan los mismos datos en las mismas posiciones (O(N))
-  
+
   /* BUSQUEDA DE DATOS */
 
   // busqueda en arbol rojinegro y calcular el tiempo empleado
@@ -139,7 +137,7 @@ int main( int argc, char* argv[] )
       << "Error al leer \"" << argv[ 2 ]
       << "\" para busqueda el arbol RN."
       << std::endl;
-  
+
   // busqueda en arbol AVL y calcular el tiempo empleado
   std::clock_t inicioBusquedaAVL = std::clock( );
   bool BusquedaAVL = searchData( miArbolAVL, argv[ 2 ] );
@@ -171,7 +169,7 @@ int main( int argc, char* argv[] )
       << "Error al leer \"" << argv[ 2 ]
       << "\" para busqueda el monticulo."
       << std::endl;
-  
+
   /* ELIMINACION DE DATOS */
 
   // eliminacion en arbol rojinegro y calcular el tiempo empleado
@@ -189,7 +187,7 @@ int main( int argc, char* argv[] )
       << "Error al leer \"" << argv[ 2 ]
       << "\" para eliminacion el arbol RN."
       << std::endl;
-  
+
   // eliminacion en arbol AVL y calcular el tiempo empleado
   std::clock_t inicioeliminacionAVL = std::clock( );
   bool eliminacionAVL = deleteData( miArbolAVL, argv[ 2 ] );
@@ -221,7 +219,7 @@ int main( int argc, char* argv[] )
       << "Error al leer \"" << argv[ 2 ]
       << "\" para eliminacion el monticulo."
       << std::endl;
-  
+
   return( 0 );
 }
 
@@ -229,17 +227,42 @@ int main( int argc, char* argv[] )
 template< class TArbol >
 bool addData( TArbol& arbol, const std::string& nomArch )
 {
-  std::ifstream entrada( nomArch.c_str( ) );
+  std::string nombreArchivo = "add.csv";
+  std::ifstream entrada( nombreArchivo );
+  std::ifstream entrada( nombreArchivo  );
   if( !entrada )
     return( false );
   while( !entrada.eof( ) )
   {
     // TODO #16: Leer la linea del archivo y tokenizar para crear un objeto tipo song
-    
-    // TODO #17: Implementar la función insert en cada uno de los arboles
-    arbol.insert( valor );  // El arbol debe proveer el metodo "insert"
+    std::string linea;
+    std: getline(entrada, linea);
+    if(linea.empty())
+      continue;
 
-  } // elihw
+    std::stringstream ss(linea);
+    std:: string id, name, genre, artists, album, popularitytxt, durationMstxt, explicitContenttxt;
+    std::getline(ss, id, ',');
+    std::getline(ss, name, ',');
+    std::getline(ss, genre, ';');
+    std::getline(ss, artists, ';');
+    std::getline(ss, album, ';');
+    std::getline(ss, popularitytxt, ';');
+    std::getline(ss, durationMstxt, ';');
+    std::getline(ss, explicitContenttxt, ';');
+
+    int popularity= std::stoi(popularitytxt);
+    int durationMs= std::stoi(durationMstxt);
+    bool explicitContent=(explicitContenttxt == true);
+
+    //Se crea la cancion 
+    Song* song= new Song(id, name, genre, artists, album, popularity, durationMs, explicitContent);
+
+
+    // TODO #17: Implementar la función insert en cada uno de los arboles
+    arbol.insert( *cancion );  // El arbol debe proveer el metodo "insert"
+
+  } 
   entrada.close( );
   return( true );
 }
@@ -247,18 +270,33 @@ bool addData( TArbol& arbol, const std::string& nomArch )
 
 
 // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 template< class TArbol >
 bool searchData( TArbol& arbol, const std::string& nomArch )
 {
-  std::ifstream entrada( nomArch.c_str( ) );
+  std::string nombreArchivo = "add.csv";
+  std::ifstream entrada( nombreArchivo );
+  std::ifstream entrada( nombreArchivo );
   if( !entrada )
     return( false );
+
+  std::string header;
+  std::getline(entrada, header);
+
   while( !entrada.eof( ) )
   {
     // TODO #20: Leer la linea del archivo y extraer el identificador a buscar
-    
+    std::string linea;
+    std::getline(entrada, linea);
+    if(linea.empty())
+      continue;
+
+    std::stringstream ss(linea);
+    std::string id;
+    std::getline(ss, id, ',');
+
     // TODO #21: Implementar la función search en cada uno de los arboles
-    arbol.search( valor );  // El arbol debe proveer el metodo "search"
+    arbol.search( id );  // El arbol debe proveer el metodo "search"
 
   } // elihw
   entrada.close( );
@@ -276,14 +314,6 @@ bool deleteData( TArbol& arbol, const std::string& nomArch )
   while( !entrada.eof( ) )
   {
     // TODO #22: Leer la linea del archivo y extraer el identificador a eliminar
-    
+
     // TODO #23: Implementar la función delete en cada uno de los arboles
     arbol.delete( valor );  // El arbol debe proveer el metodo "delete"
-
-  } // elihw
-  entrada.close( );
-  return( true );
-}
-// -------------------------------------------------------------------------
-
-// eof - taller_3_ordenamiento_busqueda.cxx
